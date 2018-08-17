@@ -1,0 +1,89 @@
+apply plugin: 'com.google.protobuf'
+apply plugin: 'application'
+
+apply plugin: 'java'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+group 'com.example'
+version '0.1'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.1"
+    }
+}
+
+dependencies {
+    compile group: 'io.grpc', name: 'grpc-netty', version: '1.1.2'
+    compile group: 'io.grpc', name: 'grpc-protobuf', version: '1.1.2'
+    compile group: 'io.grpc', name: 'grpc-stub', version: '1.1.2'
+    compile group: 'io.grpc', name: 'grpc-services', version: '1.1.2'
+
+    compile group: 'org.springframework', name: 'spring-aop', version: '4.3.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-aspects', version: '4.3.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-beans', version: '4.3.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context', version: '4.3.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context-support', version: '4.3.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-core', version: '4.3.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-expression', version: '4.3.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-jdbc', version: '4.3.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-jms', version: '4.3.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-tx', version: '4.3.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-web', version: '4.3.5.RELEASE'
+    compile group: 'org.springframework', name: 'spring-test', version: '4.3.5.RELEASE'
+}
+
+subprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
+    }
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir 'src/main/proto'
+        }
+        java {
+            // include self written and generated code
+            srcDirs 'src/main/java', 'generated-sources/main/java', 'generated-sources/main/grpc'
+        }
+    }
+}
+
+mainClassName = "com.example.HelloMain"
+
+protobuf {
+    // Configure the protoc executable
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:3.0.2'
+    }
+
+    // Configure the codegen plugins
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.1.2'
+        }
+    }
+
+    generateProtoTasks.generatedFilesBaseDir = 'generated-sources'
+
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
