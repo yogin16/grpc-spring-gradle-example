@@ -87,3 +87,9 @@ protobuf {
         }
     }
 }
+
+// execute main method from docker
+task execute(type:JavaExec) {
+    main = "com.example.HelloMain"
+    classpath = sourceSets.main.runtimeClasspath
+}

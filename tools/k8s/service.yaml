@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: grpc-hello
+  labels:
+    app: grpc-hello
+spec:
+  selector:
+    name: grpc-hello
+  ports:
+  - protocol: TCP
+    port: 10000
+    targetPort: 10000
+    name: grpc
+  type: NodePort
